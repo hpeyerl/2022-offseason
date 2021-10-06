@@ -5,10 +5,13 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.DriverControls;
 
 public class Drive extends SubsystemBase {
   /** Creates a new Drive. */
-  public Drive() {}
+  public Drive() {
+    setDefaultCommand(new DriverControls());
+  }
 
   @Override
   public void periodic() {
