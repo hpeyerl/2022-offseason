@@ -23,14 +23,14 @@ public class DriveControl extends CommandBase {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public DriveControl(DriveTrain subsystem, Supplier <Double> rightTrigger) {
+  public DriveControl(DriveTrain subsystem, Supplier <Double> rightTrigger, Supplier <Double> leftTrigger) {
     m_subsystem = subsystem;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
 
-  // Called when the command is initially scheduled.
+// Called when the command is initially scheduled.
   @Override
   public void initialize() {}
 
