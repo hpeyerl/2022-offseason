@@ -4,14 +4,16 @@
 
 package frc.robot;
 
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.POVButton;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.driverControl;
+import frc.robot.subsystems.drivetrain;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -21,9 +23,8 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  private final drivetrain m_drivetrainSubsystem = new drivetrain();
 
-  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -37,7 +38,12 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+	  m_drivetrainSubsystem.setDefaultCommand(drivercontrolcommand());
+  }
+  public Command drivercontrolcommand(){
+	  return new driverControl(m_drivetrainSubsystem, ()-> (driverController.getRawAxis(Constants.RIGHT_TRIGGER)), () -> (driverController.getRawAxis(Constants.LEFT_TRIGGER)));
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -46,7 +52,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    return null;
   }
   XboxController driverController = new XboxController(Constants.DRIVER_CONTROLLER);
 	XboxController operatorController = new XboxController(Constants.OPERATOR_CONTROLLER);

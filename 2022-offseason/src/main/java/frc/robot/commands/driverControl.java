@@ -4,21 +4,31 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.ExampleSubsystem;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.drivetrain;
+
+import java.util.function.Supplier;
+
 
 /** An example command that uses an example subsystem. */
-public class ExampleCommand extends CommandBase {
+public class driverControl extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ExampleSubsystem m_subsystem;
-
+  private final drivetrain m_subsystem;
+  private TalonSRX LeftMotor1 = new TalonSRX(0);
+  //@param 
   /**
    * Creates a new ExampleCommand.
    *
-   * @param subsystem The subsystem used by this command.
+   * @param 
+   
+    The subsystem used by this command.
    */
-  public ExampleCommand(ExampleSubsystem subsystem) {
+  public driverControl(drivetrain subsystem, Supplier<Double> rightTrigger, leftTrigger) {
+
     m_subsystem = subsystem;
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
