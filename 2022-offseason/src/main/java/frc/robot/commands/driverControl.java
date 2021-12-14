@@ -25,7 +25,8 @@ public class driverControl extends CommandBase {
    
     The subsystem used by this command.
    */
-  public driverControl(drivetrain subsystem, Supplier<Double> rightTrigger, leftTrigger) {
+  //add left trigger
+  public driverControl(drivetrain subsystem, Supplier<Double> rightTrigger, Supplier<Double> leftTrigger, Supplier<Double> rightStick_X) {
 
     m_subsystem = subsystem;
 
