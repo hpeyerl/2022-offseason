@@ -47,7 +47,7 @@ public final class Constants {
  // motors, solenoids and other
  public static enum MOTORS {
    LEFT_MOTOR_1, // Talon 0
-   LEFT_MOTOR_2, // Victor 1
+   LEFT_MOTOR_2, // Victor spx 1
    RIGHT_MOTOR_1, // Talon 2
    RIGHT_MOTOR_2, // Victor 3
  }

@@ -5,9 +5,6 @@
 package frc.robot.commands;
 
 import java.util.function.Supplier;
-
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain; 
 
@@ -15,20 +12,26 @@ import frc.robot.subsystems.DriveTrain;
 public class DriveControl extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final DriveTrain m_subsystem;
-
-  private TalonSRX leftMotor1 = new TalonSRX(0); 
-
+  private Double TriggerR; 
+  private Double TriggerL; 
+  private Double LStickX;
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public DriveControl(DriveTrain subsystem, Supplier <Double> rightTrigger, Supplier <Double> leftTrigger) {
+  public DriveControl(DriveTrain subsystem, 
+  Supplier <Double> rightTrigger,
+   Supplier <Double> leftTrigger,
+   Supplier <Double> leftStickX) {
     m_subsystem = subsystem;
 
+    this.TriggerR = rightTrigger.get(); 
+    this.TriggerL = leftTrigger.get();
+    this.LStickX = leftStickX.get(); 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
-  }
+   }
 
 // Called when the command is initially scheduled.
   @Override
@@ -36,7 +39,10 @@ public class DriveControl extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    Double speed = TriggerR - TriggerL;
+    m_subsystem.setMotors(-speed - LStickX, speed + LStickX);
+  }
 
   // Called once the command ends or is interrupted.
   @Override

@@ -41,8 +41,9 @@ public class RobotContainer {
 
   public Command driverControlCommand() {
 	return new DriveControl(m_DriveTrain,
-	 ()-> (driverController.getRawAxis(Constants.RIGHT_TRIGGER), 
-	 () -> (driverController.getRawAxis(Constants.LEFT_TRIGGER)));
+	 ()-> (driverController.getRawAxis(Constants.RIGHT_TRIGGER)), 
+	 () -> (driverController.getRawAxis(Constants.LEFT_TRIGGER)), 
+	 () -> (driverController.getRawAxis(Constants.LEFT_STICK_X))); 
   };
 
   /**
