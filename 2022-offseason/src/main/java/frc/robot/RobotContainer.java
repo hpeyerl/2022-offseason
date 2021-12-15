@@ -42,7 +42,10 @@ public class RobotContainer {
 	  m_drivetrainSubsystem.setDefaultCommand(drivercontrolcommand());
   }
   public Command drivercontrolcommand(){  
-	return new driverControl(m_drivetrainSubsystem, ()-> (driverController.getRawAxis(Constants.RIGHT_TRIGGER(), ()-> (driverController.getRawAxis(Constants.LEFT_TRIGGER(), ()-> (driverController.getRawAxis(RIGHT_STICK_X) )){};
+	return new driverControl(m_drivetrainSubsystem, 
+	()-> (driverController.getRawAxis(Constants.RIGHT_TRIGGER)),
+	()-> (driverController.getRawAxis(Constants.LEFT_TRIGGER)),
+	()-> (driverController.getRawAxis(Constants.LEFT_STICK_X)));
 }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

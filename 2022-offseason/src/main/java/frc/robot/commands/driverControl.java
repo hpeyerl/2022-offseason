@@ -16,7 +16,11 @@ import java.util.function.Supplier;
 public class driverControl extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final drivetrain m_subsystem;
-  private TalonSRX LeftMotor1 = new TalonSRX(0);
+  private double RTrigger;
+  private double LTrigger;
+  private double LStickX;
+
+
   //@param 
   /**
    * Creates a new ExampleCommand.
@@ -26,13 +30,20 @@ public class driverControl extends CommandBase {
     The subsystem used by this command.
    */
   //add left trigger
-  public driverControl(drivetrain subsystem, Supplier<Double> rightTrigger, Supplier<Double> leftTrigger, Supplier<Double> rightStick_X) {
+  public driverControl(drivetrain subsystem, 
+  Supplier<Double> rightTrigger, 
+  Supplier<Double> leftTrigger,  
+  Supplier<Double> leftStick_X) {
 
     m_subsystem = subsystem;
-
+    this.RTrigger = rightTrigger.get();
+    this.LTrigger = leftTrigger.get();
+    this.LStickX = leftStick_X.get();
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
+
+  
 
   // Called when the command is initially scheduled.
   @Override
