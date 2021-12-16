@@ -11,29 +11,25 @@ import frc.robot.subsystems.drivetrain;
 
 import java.util.function.Supplier;
 
-
 /** An example command that uses an example subsystem. */
 public class driverControl extends CommandBase {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+  @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final drivetrain m_subsystem;
   private double RTrigger;
   private double LTrigger;
   private double LStickX;
 
-
-  //@param 
+  // @param
   /**
    * Creates a new ExampleCommand.
    *
-   * @param 
-   
-    The subsystem used by this command.
+   * @param subsystem
+   * 
+   *                  The subsystem used by this command.
    */
-  //add left trigger
-  public driverControl(drivetrain subsystem, 
-  Supplier<Double> rightTrigger, 
-  Supplier<Double> leftTrigger,  
-  Supplier<Double> leftStick_X) {
+  // add left trigger
+  public driverControl(drivetrain subsystem, Supplier<Double> rightTrigger, Supplier<Double> leftTrigger,
+      Supplier<Double> leftStick_X) {
 
     m_subsystem = subsystem;
     this.RTrigger = rightTrigger.get();
@@ -43,19 +39,20 @@ public class driverControl extends CommandBase {
     addRequirements(subsystem);
   }
 
-  
-
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   // Returns true when the command should end.
   @Override
