@@ -9,9 +9,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.POVButton;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.DriveControl;
+import frc.robot.subsystems.DriveTrain;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -21,9 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-
-  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
+  private final DriveTrain m_dTrain = new DriveTrain();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -37,8 +35,16 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+	  m_dTrain.setDefaultCommand(driverControlCommand());
+  }
 
+  private Command driverControlCommand(){
+	  return new DriveControl(m_dTrain, 
+	  () -> (driverController.getRawAxis(Constants.RIGHT_TRIGGER)),
+	  () -> (driverController.getRawAxis(Constants.LEFT_TRIGGER)),
+	  () -> (driverController.getRawAxis(Constants.LEFT_STICK_X)));
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -46,7 +52,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    return null;
   }
   XboxController driverController = new XboxController(Constants.DRIVER_CONTROLLER);
 	XboxController operatorController = new XboxController(Constants.OPERATOR_CONTROLLER);
@@ -80,8 +86,6 @@ public class RobotContainer {
 	POVButton dDPADDown = new POVButton(this.driverController, Constants.DPAD_DOWN);
 	POVButton dDPADLeft = new POVButton(this.driverController, Constants.DPAD_LEFT);
 	POVButton dDPADRight = new POVButton(this.driverController, Constants.DPAD_RIGHT);
-
-
 
 
   	public boolean getOperatorButton(int axis) {
