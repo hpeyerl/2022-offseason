@@ -12,13 +12,23 @@ thresholds = [(30, 100, 15, 127, 15, 127), # generic_red_thresholds
               (30, 100, -64, -8, -32, 32), # generic_green_thresholds
               (0, 30, 0, 64, -128, 0)] # generic_blue_thresholds
 
+ExpStep = 300
+CurExp = 1000
+MinBrt = 20
+MaxBrt = 35
+MinExp = 10
+MaxExp = 60000
+
+KP_High = 10
+KP_Low = 100
+
 sensor.reset()
 sensor.set_pixformat(sensor.RGB565)
 sensor.set_framesize(sensor.QVGA)
 sensor.skip_frames(time = 2000)
 sensor.set_auto_gain(False) # must be turned off for color tracking
 sensor.set_auto_whitebal(False) # must be turned off for color tracking
-sensor.set_auto_exposure(False)
+sensor.set_auto_exposure(False, 20000)
 clock = time.clock()
 
 # Only blobs that with more pixels than "pixel_threshold" and more area than "area_threshold" are
@@ -28,6 +38,21 @@ clock = time.clock()
 while(True):
     clock.tick()
     img = sensor.snapshot()
+
+    sensor.skip_frames(4)
+    img = sensor.snapshot()
+    curStats = img.get_statistics()
+    CurBrt = curStats.l_mean()
+
+    if(CurBrt > MaxBrt):
+        ErrHigh = CurBrt - MaxBrt
+        ExpStep = KP_High * ErrHigh
+        CurExp = max(CurExp - ExpStep, MinExp)
+    elif(CurBrt < MinBrt):
+        ErrLow = MinBrt - CurBrt
+        ExpStep = KP_Low * ErrLow
+        CurExp = min(CurExp + ExpStep, MaxExp)
+
     for blob in img.find_blobs([thresholds[threshold_index]], pixels_threshold=200, area_threshold=200, merge=True):
         # These values depend on the blob not being circular - otherwise they will be shaky.
         if blob.elongation() > 0.5:
