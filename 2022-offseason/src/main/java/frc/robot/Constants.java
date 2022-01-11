@@ -17,6 +17,8 @@ public final class Constants {
  public static final int DRIVER_CONTROLLER = 0;
  public static final int OPERATOR_CONTROLLER = 1;
 
+public static final int currentLimit = 1600;
+
  public static final int BUTTON_A = 1;
  public static final int BUTTON_B = 2;
  public static final int BUTTON_X = 3;

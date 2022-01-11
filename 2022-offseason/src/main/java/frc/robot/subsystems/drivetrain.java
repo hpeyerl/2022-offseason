@@ -19,6 +19,8 @@ public class drivetrain extends SubsystemBase {
   private VictorSPX RightMotor2 = new VictorSPX(Constants.MOTORS.RIGHT_MOTOR_2.ordinal());
 
   public drivetrain() {
+    LeftMotor1.configContinuousCurrentLimit(Constants.currentLimit);
+    RightMotor1.configContinuousCurrentLimit(Constants.currentLimit);
     LeftMotor2.follow(LeftMotor1);
     RightMotor2.follow(RightMotor1);
   }
