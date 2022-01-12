@@ -1,67 +1,68 @@
-# Single Color RGB565 Blob Tracking Example
+# Find Circles Example
 #
-# This example shows off single color RGB565 tracking using the OpenMV Cam.
+# This example shows off how to find circles in the image using the Hough
+# Transform. https://en.wikipedia.org/wiki/Circle_Hough_Transform
+#
+# Note that the find_circles() method will only find circles which are completely
+# inside of the image. Circles which go outside of the image/roi are ignored...
 
-import sensor, image, time, math
-
-threshold_index = 0 # 0 for red, 1 for green, 2 for blue
-
-# Color Tracking Thresholds (L Min, L Max, A Min, A Max, B Min, B Max)
-# The below thresholds track in general red/green/blue things. You may wish to tune them...
-thresholds = [(30, 100, 15, 127, 15, 127), # generic_red_thresholds
-              (30, 100, -64, -8, -32, 32), # generic_green_thresholds
-              (0, 30, 0, 64, -128, 0)] # generic_blue_thresholds
-
-ExpStep = 300
-CurExp = 1000
-MinBrt = 20
-MaxBrt = 35
-MinExp = 10
-MaxExp = 60000
-
-KP_High = 10
-KP_Low = 100
+import sensor, image, time
 
 sensor.reset()
-sensor.set_pixformat(sensor.RGB565)
-sensor.set_framesize(sensor.QVGA)
+sensor.set_pixformat(sensor.RGB565) # grayscale is faster
+sensor.set_framesize(sensor.QQVGA)
 sensor.skip_frames(time = 2000)
-sensor.set_auto_gain(False) # must be turned off for color tracking
-sensor.set_auto_whitebal(False) # must be turned off for color tracking
-sensor.set_auto_exposure(False, 20000)
 clock = time.clock()
-
-# Only blobs that with more pixels than "pixel_threshold" and more area than "area_threshold" are
-# returned by "find_blobs" below. Change "pixels_threshold" and "area_threshold" if you change the
-# camera resolution. "merge=True" merges all overlapping blobs in the image.
+sensor.set_auto_exposure(False, exposure_us = 1000)
+#sensor.set_quality(24)
+#sensor.set_framesize(sensor.SXGA)
+#sensor.set_framesize(sensor.QQVGA)
 
 while(True):
     clock.tick()
-    img = sensor.snapshot()
+    img = sensor.snapshot().lens_corr(1.8)
 
-    sensor.skip_frames(4)
-    img = sensor.snapshot()
-    curStats = img.get_statistics()
-    CurBrt = curStats.l_mean()
+    # Circle objects have four values: x, y, r (radius), and magnitude. The
+    # magnitude is the strength of the detection of the circle. Higher is
+    # better...
 
-    if(CurBrt > MaxBrt):
-        ErrHigh = CurBrt - MaxBrt
-        ExpStep = KP_High * ErrHigh
-        CurExp = max(CurExp - ExpStep, MinExp)
-    elif(CurBrt < MinBrt):
-        ErrLow = MinBrt - CurBrt
-        ExpStep = KP_Low * ErrLow
-        CurExp = min(CurExp + ExpStep, MaxExp)
+    # `threshold` controls how many circles are found. Increase its value
+    # to decrease the number of circles detected...
 
-    for blob in img.find_blobs([thresholds[threshold_index]], pixels_threshold=200, area_threshold=200, merge=True):
-        # These values depend on the blob not being circular - otherwise they will be shaky.
-        if blob.elongation() > 0.5:
-            img.draw_edges(blob.min_corners(), color=(255,0,0))
-            img.draw_line(blob.major_axis_line(), color=(0,255,0))
-            img.draw_line(blob.minor_axis_line(), color=(0,0,255))
-        # These values are stable all the time.
-        img.draw_rectangle(blob.rect())
-        img.draw_cross(blob.cx(), blob.cy())
-        # Note - the blob rotation is unique to 0-180 only.
-        img.draw_keypoints([(blob.cx(), blob.cy(), int(math.degrees(blob.rotation())))], size=20)
-    print(clock.fps())
+    # `x_margin`, `y_margin`, and `r_margin` control the merging of similar
+    # circles in the x, y, and r (radius) directions.
+
+    # r_min, r_max, and r_step control what radiuses of circles are tested.
+    # Shrinking the number of tested circle radiuses yields a big performance boost.
+
+    for c in img.find_circles(threshold = 3280, x_margin = 10, y_margin = 10, r_margin = 10,
+            r_min = 2, r_max = 1000, r_step = 2):
+        img.draw_circle(c.x(), c.y(), c.r(), color = (255, 0, 0))
+        #print(c)
+        #print(img.get_pixel(c.x(), c.y()))
+
+        rgbMid = img.get_pixel(c.x(), c.y());
+        redMid = rgbMid[0]
+        greenMid = rgbMid[1]
+        blueMid = rgbMid[2]
+
+        rgbLeft = img.get_pixel(c.x()-(int)(c.r()/2), c.y());
+        redLeft = rgbLeft[0]
+        greenLeft = rgbLeft[1]
+        blueLeft = rgbLeft[2]
+
+        rgbRight = img.get_pixel(c.x()+(int)(c.r()/2), c.y());
+        redRight = rgbRight[0]
+        greenRight = rgbRight[1]
+        blueRight = rgbRight[2]
+        #print(rgb)
+
+        if (redMid>100 and redMid>(greenMid*2) and redMid > (blueMid * 2) and
+            redLeft>100 and redLeft>(greenLeft*2) and redLeft > (blueLeft * 2) and
+            redRight>100 and redRight>(greenRight*2) and redRight > (blueRight * 2)
+            ):
+            print (rgbMid)
+
+
+
+    #print("FPS %f" % clock.fps())
