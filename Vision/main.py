@@ -37,9 +37,12 @@ while(True):
 
     for c in img.find_circles(threshold = 3280, x_margin = 10, y_margin = 10, r_margin = 10,
             r_min = 2, r_max = 1000, r_step = 2):
-        img.draw_circle(c.x(), c.y(), c.r(), color = (255, 0, 0))
+        img.draw_circle(c.x(), c.y(), c.r(), color = (0, 0, 0))
         #print(c)
         #print(img.get_pixel(c.x(), c.y()))
+        distance = (2.8 * 180* 120)/((c.r()*2)* 30)
+
+
 
         rgbMid = img.get_pixel(c.x(), c.y());
         redMid = rgbMid[0]
@@ -62,6 +65,9 @@ while(True):
             redRight>100 and redRight>(greenRight*2) and redRight > (blueRight * 2)
             ):
             print (rgbMid)
+            print(distance)
+            print (c.r())
+            #print (c.r())
 
 
 
