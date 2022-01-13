@@ -6,7 +6,7 @@
 # Note that the find_circles() method will only find circles which are completely
 # inside of the image. Circles which go outside of the image/roi are ignored...
 
-import sensor, image, time
+import sensor, image, time, json
 
 sensor.reset()
 sensor.set_pixformat(sensor.RGB565) # grayscale is faster
@@ -14,9 +14,6 @@ sensor.set_framesize(sensor.QQVGA)
 sensor.skip_frames(time = 2000)
 clock = time.clock()
 sensor.set_auto_exposure(False, exposure_us = 1000)
-#sensor.set_quality(24)
-#sensor.set_framesize(sensor.SXGA)
-#sensor.set_framesize(sensor.QQVGA)
 
 while(True):
     clock.tick()
@@ -35,14 +32,10 @@ while(True):
     # r_min, r_max, and r_step control what radiuses of circles are tested.
     # Shrinking the number of tested circle radiuses yields a big performance boost.
 
-    for c in img.find_circles(threshold = 4700, x_margin = 10, y_margin = 10, r_margin = 10,
-            r_min = 2, r_max = 1000, r_step = 2):
+    for c in img.find_circles(threshold = 3280, x_margin = 20, y_margin = 20, r_margin = 10,
+            r_min = 1, r_max = 2000, r_step = 2):
         img.draw_circle(c.x(), c.y(), c.r(), color = (0, 0, 0))
-        #print(c)
-        #print(img.get_pixel(c.x(), c.y()))
         distance = (24 * 166.67)/(c.r()*2)
-
-
 
         rgbMid = img.get_pixel(c.x(), c.y());
         redMid = rgbMid[0]
@@ -58,17 +51,25 @@ while(True):
         redRight = rgbRight[0]
         greenRight = rgbRight[1]
         blueRight = rgbRight[2]
-        #print(rgb)
 
+        jsonstring = {}
         if (redMid>100 and redMid>(greenMid*2) and redMid > (blueMid * 2) and
             redLeft>100 and redLeft>(greenLeft*2) and redLeft > (blueLeft * 2) and
             redRight>100 and redRight>(greenRight*2) and redRight > (blueRight * 2)
             ):
-            print (rgbMid)
-            print(distance)
-            print (c.r())
+            #print("red")
+            #print (rgbMid)
+            #print(distance)
             #print (c.r())
-
-
+            xPos = (c.x()/80)-1
+            yPos = 1-(c.y()/60)
+            #print(xPos)
+            #print(yPos)
+            jsonstring["balltype"] = "red"
+            jsonstring["xpos"] = xPos
+            jsonstring["ypos"] = yPos
+            jsonstring["distance"] = distance
+            print( "%s" %json.dumps(jsonstring))
+            #print (c.r())
 
     #print("FPS %f" % clock.fps())
