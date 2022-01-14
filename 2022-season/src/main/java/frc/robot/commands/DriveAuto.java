@@ -4,20 +4,17 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class DriveAuto extends CommandBase {
   private DriveSubsystem driveSubsystem;
-  private Timer timer;
 
   private boolean finish = false;
 
   private double leftPower;
   private double rightPower;
-  private double duration;
-  
+  private double duration;  
   
   /** Creates a new DriveAuto. */
   public DriveAuto(DriveSubsystem driveSubsystem, double leftPower, double rightPower, double duration) {
@@ -32,7 +29,7 @@ public class DriveAuto extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    basicDrive(leftPower,rightPower,duration); //replace empty values with private variables in the future
+    driveSubsystem.basicDrive(leftPower,rightPower,duration); //replace empty values with private variables in the future
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -47,17 +44,5 @@ public class DriveAuto extends CommandBase {
   @Override
   public boolean isFinished() {
     return !finish;
-  }
-
-  public void basicDrive(double leftPower, double rightPower, double duration) {
-    driveSubsystem.setMotors(leftPower, rightPower);
-
-    timer.start();
-
-    while (true) {
-      if (timer.hasPeriodPassed(duration)) {
-        driveSubsystem.resetMotors();
-      }
-    }
   }
 }
