@@ -35,14 +35,12 @@ while(True):
     # r_min, r_max, and r_step control what radiuses of circles are tested.
     # Shrinking the number of tested circle radiuses yields a big performance boost.
 
-    for c in img.find_circles(threshold = 4700, x_margin = 10, y_margin = 10, r_margin = 10,
+    for c in img.find_circles(threshold = 3280, x_margin = 10, y_margin = 10, r_margin = 10,
             r_min = 2, r_max = 1000, r_step = 2):
         img.draw_circle(c.x(), c.y(), c.r(), color = (0, 0, 0))
         #print(c)
         #print(img.get_pixel(c.x(), c.y()))
         distance = (24 * 166.67)/(c.r()*2)
-
-
 
         rgbMid = img.get_pixel(c.x(), c.y());
         redMid = rgbMid[0]
@@ -60,14 +58,26 @@ while(True):
         blueRight = rgbRight[2]
         #print(rgb)
 
-        if (redMid>100 and redMid>(greenMid*2) and redMid > (blueMid * 2) and
-            redLeft>100 and redLeft>(greenLeft*2) and redLeft > (blueLeft * 2) and
-            redRight>100 and redRight>(greenRight*2) and redRight > (blueRight * 2)
+        if (blueMid>100 and blueMid>(greenMid*2) and blueMid > (redMid * 2) and
+            blueLeft>100 and blueLeft>(greenLeft*2) and blueLeft > (redLeft * 2) and
+            blueRight>100 and blueRight>(greenRight*2) and blueRight > (redRight * 2)
             ):
-            print (rgbMid)
-            print(distance)
-            print (c.r())
+            #print (rgbMid)
+            #print(distance)
             #print (c.r())
+            #print (c.r())
+            xPos = (c.x()/80)-1
+            yPos = 1-(c.y()/60)
+            #print(xPos)
+            #print(yPos)
+            jsonstring["balltype"] = "blue"
+            jsonstring["xpos"] = xPos
+            jsonstring["ypos"] = yPos
+            jsonstring["distance"] = distance
+            print( "%s" %json.dumps(jsonstring))
+            #print (c.r())
+
+    #print("FPS %f" % clock.fps())
 
 
 
