@@ -46,6 +46,18 @@ public final class Constants {
  public static final int CONTINOUS_CURRENT = 60;
  public static final int PEAK_CURRENT = 100; //Subject to change
 
+ public static final double TURNING_RATE = 0.10; // previously 0.7
+ public static final int NEO550_CURRENT_LIMIT = 0;
+ public static final int CURRENT_LIMIT = 70;
+ public static final int CONTINUOUS_CURRENT_LIMIT = 35;
+ public static final int CURRENT_LIMIT_DURATION = 50; // 50 milliseconds
+ public static final int ENCODER_PULSES_PER_REVOLUTION = 1440;
+ public static final int ENCODER_GEAR_RATIO = 3;
+
+ public static final double VOLTAGE_RAMP_RATE = 0.65; // to disable ramp rate make this 0
+
+
+
  public static final int BOT_IMU = 11;
  // end of remote values
 
@@ -55,5 +67,6 @@ public final class Constants {
    LEFT_MOTOR_2, // Victor 1
    RIGHT_MOTOR_1, // Talon 2
    RIGHT_MOTOR_2, // Victor 3
+   FLYWHEEL_MOTOR_1 //Some Motor Variant
  }
 }
