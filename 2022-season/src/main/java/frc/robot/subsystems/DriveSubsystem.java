@@ -10,20 +10,13 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
-import edu.wpi.first.wpilibj.motorcontrol.Victor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class DriveSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  private Timer timer;
 
   private final PigeonIMU pigeonIMU = new PigeonIMU(Constants.BOT_IMU);
   
@@ -31,9 +24,6 @@ public class DriveSubsystem extends SubsystemBase {
   private final TalonSRX rightMotor1 = new TalonSRX(Constants.MOTORS.RIGHT_MOTOR_1.ordinal());
   private final VictorSPX leftMotor2 = new VictorSPX(Constants.MOTORS.LEFT_MOTOR_2.ordinal());
   private final VictorSPX rightMotor2 = new VictorSPX(Constants.MOTORS.RIGHT_MOTOR_2.ordinal()); 
-
-  private final Encoder leftEncoder = new Encoder(0,1);
-  private final Encoder rightEncoder = new Encoder(2,3);
 
   private final double RPM = 0;
   private final double WHEEL_RADIUS = 0;
@@ -49,6 +39,9 @@ public class DriveSubsystem extends SubsystemBase {
 
   private double turnDir = 0;
   private double setAngle = 0;
+
+  private Integer leftEncoderReadings = 0;
+  private Integer rightEncoderReadings = 0;
   
 
   double integral, prev_error, desired_angle = 0;
@@ -94,17 +87,22 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void resetEncoders() {
-    leftEncoder.reset();
-    rightEncoder.reset();
+    leftEncoderReadings = 0;
+    rightEncoderReadings = 0;
   }
 
   public ArrayList<Integer> returnEncoderReadings() {
     ArrayList<Integer> encoderReadings = new ArrayList<>();
 
-    encoderReadings.add(leftEncoder.get(),rightEncoder.get());
+    leftEncoderReadings = (int) leftMotor1.getSelectedSensorPosition();
+    rightEncoderReadings = (int) rightMotor1.getSelectedSensorPosition();
+
+    encoderReadings.add(leftEncoderReadings,rightEncoderReadings);
 
     return encoderReadings;
   }
+
+  
 
   public double returnPIDError(double output, double setInput) {
     double pidError = pidController.calculate(output, setInput);
@@ -146,17 +144,7 @@ public class DriveSubsystem extends SubsystemBase {
     return yawPitchRoll[1];
   }
 
-  public void turnRobot(double angle) {
-
-    while (!onHeading(2, getError(angle, returnBotHeading()))) { //consider adding a threshold tolerance level
-      double PIDTurnPower = MathUtil.clamp(returnPIDError(returnBotHeading(), angle),-1,1);
-      if (angle < 0) {
-        PIDTurnPower *= -1;
-      }
-      setMotors(PIDTurnPower, -PIDTurnPower);
-    }
-    resetMotors();
-  }
+  
 
   public void setTurnPID(double angle) {
     pidTurnController.setSetpoint(angle);
@@ -184,7 +172,7 @@ public class DriveSubsystem extends SubsystemBase {
   public boolean onHeading(double threshold, double error) {
     boolean onHeading = false;
     if (Math.abs(error)<=threshold) {
-      onHeading = !onHeading;
+      onHeading = true;
     }
 
     return onHeading;
@@ -214,44 +202,9 @@ public class DriveSubsystem extends SubsystemBase {
     }
   }
 
-  public void encoderDrive(double inputValue, double motorPower, String driveMethod) {
-    switch (driveMethod) {
-      case "ticks":
-        if (returnEncoderReadings().get(0)<inputValue) {
-          //keep driving
-          setMotors(motorPower, motorPower);
-        }
-        else {
-          resetMotors();
-        }
-      case "inches":
-        if (returnDistanceTravelledInches(returnEncoderReadings()).get(0)<inputValue) {
-          //keep driving inches version
-          setMotors(motorPower, motorPower);
-        }
-        else {
-          resetMotors();
-        }
-    }
-  }
-
-  public void basicDrive(double leftPower, double rightPower, double duration) {
-    setMotors(leftPower, rightPower);
-
-    boolean isFinished = false;
-
-    timer.start();
-
-    while (!isFinished) {
-      if (timer.advanceIfElapsed(duration)) {
-        resetMotors();
-        isFinished = !isFinished;
-      }
-    }
-  }
-
   public void resetPigeon() {
     //reset pigeon imu
+    pigeonIMU.setYaw(0);
   }
 
 
